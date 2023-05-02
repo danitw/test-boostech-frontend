@@ -11,7 +11,7 @@ const props = defineProps({
 
 const { editPerson, handleModal, getPerson } = usePersons();
 
-const person = ref<Person>({ name: '', email: '', id: null, person_id: null });
+const person = ref<Person>({ name: '', email: '', id: 0, person_id: null });
 
 onMounted(async () => {
   person.value = await getPerson(props.id);

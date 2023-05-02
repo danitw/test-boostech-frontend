@@ -6,7 +6,14 @@ import PersonCreateModal from '@/components/PersonCreateModal.vue';
 import PersonEditModal from '@/components/PersonEditModal.vue';
 import { usePersons } from '../stores/persons';
 
-const { state: personState, getPersons, deletePerson, handleModal, searchPersons } = usePersons();
+const {
+  state: personState,
+  getPersons,
+  deletePerson,
+  handleModal,
+  searchPersons,
+  makeRaffle
+} = usePersons();
 
 getPersons();
 
@@ -37,13 +44,25 @@ function confirmationDeletePerson(id: number) {
 <template>
   <div class="container mx-auto px-4 py-8">
     <div class="flex justify-between items-center mb-6">
-      <h1 class="text-2xl font-bold">Persons List</h1>
-      <div>
+      <div class="flex items-center space-x-4">
+        <h1 class="text-2xl font-bold">Persons List</h1>
+        <router-link to="/raffle-result" class="text-blue-500 hover:underline text-xl"
+          >Raffle</router-link
+        >
+      </div>
+      <div class="flex items-center space-x-4">
         <button
-          class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+          class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded transition-colors duration-300"
           @click="() => handleModal('create')"
         >
           Create
+        </button>
+
+        <button
+          class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded transition-colors duration-300"
+          @click="() => makeRaffle()"
+        >
+          Carry out raffle
         </button>
       </div>
     </div>
@@ -88,7 +107,7 @@ function confirmationDeletePerson(id: number) {
                   Edit
                 </button>
                 <button
-                  class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded"
+                  class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded ml-2"
                   @click="
                     () => {
                       confirmationDeletePerson(person.id);

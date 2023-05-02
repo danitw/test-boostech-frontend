@@ -4,12 +4,17 @@ import { defineStore } from 'pinia';
 import Swal from 'sweetalert2';
 
 import api from '../services/api';
+import router from '@/router';
 
 export interface Person {
-  id: null | number;
+  id: number;
   name: string;
   email: string;
   person_id: null | number;
+}
+export interface newPerson {
+  name: string;
+  email: string;
 }
 
 export interface PersonUpdate {
@@ -17,10 +22,24 @@ export interface PersonUpdate {
   email?: string;
 }
 
+interface RaffleResult {
+  person1: {
+    id: number;
+    name: string;
+    email: string;
+  };
+  person2: {
+    id: number;
+    name: string;
+    email: string;
+  };
+}
+
 export const usePersons = defineStore('persons', () => {
   const state = reactive({
     persons: [] as Person[],
     modal: { open: false, action: '' },
+    raffleResult: [] as RaffleResult[],
     filteredPersons: [] as Person[]
   });
 
@@ -46,7 +65,7 @@ export const usePersons = defineStore('persons', () => {
     return response.data.person;
   }
 
-  function createPerson(person: Person) {
+  function createPerson(person: newPerson) {
     const payload = { name: person.name, email: person.email };
 
     api
@@ -89,7 +108,7 @@ export const usePersons = defineStore('persons', () => {
         state.modal = { open: false, action: '' };
         Swal.fire('Successfully deleted person');
       })
-      .catch(() => {
+      .catch(({ response }) => {
         Swal.fire(response.data.message);
       });
   }
@@ -114,6 +133,30 @@ export const usePersons = defineStore('persons', () => {
     }
   }
 
+  function makeRaffle() {
+    api
+      .get('/person/makeRaffle')
+      .then(({ data }) => {
+        state.raffleResult = data;
+        Swal.fire('Draw made successfully');
+        router.push('/raffle-result');
+      })
+      .catch(({ response }) => {
+        Swal.fire(response.data.message);
+      });
+  }
+
+  function getRaffleResult() {
+    api
+      .get('/person/raffleResult')
+      .then(({ data }) => {
+        state.raffleResult = data;
+      })
+      .catch(({ response }) => {
+        Swal.fire(response.data.message);
+      });
+  }
+
   return {
     state,
     getPersons,
@@ -122,6 +165,8 @@ export const usePersons = defineStore('persons', () => {
     editPerson,
     deletePerson,
     handleModal,
-    searchPersons
+    searchPersons,
+    makeRaffle,
+    getRaffleResult
   };
 });
